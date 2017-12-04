@@ -9,6 +9,8 @@ This is a simple web crawler designed for extracting urls from the CNN Money web
 It will save desired urls, which in this case is news articles, to _Wanted_URLS.txt, 
 and it will also create a crawled file to prevent duplicated crawls in the future.
 """
+#Change this to where you want the urls saved to.
+saveLocation = "D:/Desktop/"
 #Date
 date = datetime.date.today()
 #Date of today and yesterday
@@ -42,14 +44,13 @@ except Exception as e:
 #Converting website html to Beautiful Soup	
 sauce = urllib.request.urlopen(start_url).read()
 soup =	bs.BeautifulSoup(sauce, 'lxml')
-#print(soup)
+
 #Importing already crawled urls and adding to crawled list.
 try:
 	with open("D:/Desktop/_CRAWLED_URLS.txt") as f:
 		crawled_list = f.readlines()
 	crawled_list = [x.strip() for x in crawled_list] 
 	crawled_list = list(set(crawled_list))	
-	#print(crawled_list)
 except Exception as e:
 	print('IMPORTING CRAWLED URLS ERROR! ' + str(e))
 #Importing already scraped urls	
@@ -58,8 +59,6 @@ try:
 		scrapeD_list = f.readlines()
 	scrapeD_list = [x.strip() for x in scrapeD_list] 
 	scrapeD_list = list(set(scrapeD_list))	
-	# print(scrapeD_list)
-	# print(len(scrapeD_list))
 except Exception as e:
 	print('IMPORTING SCRAPE URLS ERROR! ' + str(e))	
 
@@ -73,13 +72,11 @@ def url_finder():
 		if len(tt) > 0:
 			if new_url not in spider_list:
 				spider_list.append(new_url)
-				#print(new_url)
 #Searching for http (other sites) and only adding urls that dont have http.				
 		elif len(kk) == 0:	
 			new_url = start_url + str(new_url)
 			if new_url not in spider_list:
 				spider_list.append(new_url)
-				#print(new_url)
 		else:
 			pass
 #Taking wanted urls from spider_list to scrape_list.
@@ -99,8 +96,7 @@ def wanted_urls():
 url_finder()
 wanted_urls()
 
-#Looping through url list, looking for more urls and adding wanted urls to scrape list. Runs until
-#every url has been crawled.
+#Looping through url list, looking for more urls and adding wanted urls to scrape list. Delete index range cap to run until it has crawled all available.
 while mainLoop:
 	for url in spider_list[0:5]:
 		if url not in crawled_list:
@@ -143,16 +139,16 @@ print("Spider: ",len(spider_list))
 print("Scrape: ",len(scrape_list))
 
 #Creating crawled text file to stop later crawls of same thing.
-saveFile = open('D:/Desktop/_CRAWLED_URLS.txt', 'w')
+saveFile = open(saveLocation + '_CRAWLED_URLS.txt', 'w')
 saveFile.close()
 for item in crawled_list:
-	saveFile = open('D:/Desktop/_CRAWLED_URLS.txt', 'a')		
+	saveFile = open(saveLocation + '_CRAWLED_URLS.txt', 'a')		
 	saveFile.write(str(item) + "\n")
 	saveFile.close()
 
 #Saving scrape url text file for scraping.
 for item in scrape_list:
-	saveFile = open('D:/Desktop/_Wanted_URLS.txt', 'a')		
+	saveFile = open(saveLocation + '_Wanted_URLS.txt', 'a')		
 	saveFile.write(str(item) + "\n")
 	saveFile.close()
 	
